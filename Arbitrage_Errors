@@ -1,0 +1,31 @@
+use std::error::Error;
+use std::fmt;
+
+#[derive(Debug)]
+pub enum ArbitrageError {
+    NoOpportunityFound,
+    InsufficientFunds,
+    FlashLoanError,
+    MarketStateError,
+    NetworkError,
+    TransactionError,
+}
+
+impl fmt::Display for ArbitrageError {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            ArbitrageError::NoOpportunityFound => write!(f, "Arbitraj fırsatı bulunamadı"),
+            ArbitrageError::InsufficientFunds => write!(f, "Yetersiz fon"),
+            ArbitrageError::FlashLoanError => write!(f, "Flashloan hatası"),
+            ArbitrageError::MarketStateError => write!(f, "Piyasa durumu hatası"),
+            ArbitrageError::NetworkError => write!(f, "Ağ hatası"),
+            ArbitrageError::TransactionError => write!(f, "İşlem hatası"),
+        }
+    }
+}
+
+impl Error for ArbitrageError {}
+
+//Bu dosya, programda ortaya çıkabilecek farklı hata türlerini tanımlar.
+ArbitrageError enum'u, NoOpportunityFound, InsufficientFunds gibi farklı hata durumlarını temsil eder.
+Display ve Error özellikleri, hata mesajlarının kullanıcı dostu bir şekilde gösterilmesini sağlar.
