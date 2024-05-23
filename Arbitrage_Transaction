@@ -1,0 +1,62 @@
+use solana_client::rpc_client::RpcClient;
+use solana_program::pubkey::Pubkey;
+use solana_sdk::signature::Signer;
+use solana_sdk::transaction::Transaction;
+
+use serum_dex::instruction::MarketInstruction;
+use serum_dex::state::MarketState;
+
+use std::error::Error;
+
+use crate::arbitrage_opportunity::ArbitrageOpportunity;
+use crate::market_state::get_market_state;
+
+pub fn create_arbitrage_transaction(
+    rpc_client: &RpcClient,
+    receiver_keypair: &solana_sdk::signer::keypair::Keypair,
+    arbitrage_opportunity: &ArbitrageOpportunity,
+    amount: u64,
+) -> Result<Transaction, Box<dyn Error>> {
+    // Arbitraj işlemi için işlem oluşturun
+    // Örneğin, Serum DEX'i kullanarak:
+    let market_instruction = MarketInstruction::new_place_order(
+        arbitrage_opportunity.market_address,
+        receiver_keypair.pubkey(),
+        receiver_keypair.pubkey(),
+        amount,
+        arbitrage_opportunity.bid_price, // Bid price'tan buy order gönderin
+        0, // 0 miktarı ile satışı gerçekleştirin
+        // Diğer gerekli parametreler (örneğin: order type, self trade prevention)
+        // Örneğin:
+        // 1. Serum DEX piyasasının durumunu yükleyin
+        let market_state = get_market_state(rpc_client, &arbitrage_opportunity.market_address)?;
+        // 2. Order türünü ve self trade prevention'ı belirleyin
+        let order_type = serum_dex::instruction::OrderType::Limit;
+        let self_trade_prevention = true;
+        // 3. Buy order'ı oluşturun
+        MarketInstruction::new_place_order(
+            arbitrage_opportunity.market_address,
+            receiver_keypair.pubkey(),
+            receiver_keypair.pubkey(),
+            amount,
+            arbitrage_opportunity.bid_price,
+            0,
+            order_type,
+            self_trade_prevention,
+        )
+    );
+
+    // İşlem oluşturun
+    let mut transaction = Transaction::new_with_payer(
+        &[market_instruction],
+        Some(&receiver_keypair.pubkey()),
+    );
+
+    // İşlemi imzalayın
+    transaction.sign(&[&receiver_keypair], rpc_client.get_latest_blockhash()?);
+
+    Ok(transaction)
+}
+//Bu dosya, Serum DEX'te arbitraj işlemi oluşturan create_arbitrage_transaction fonksiyonunu tanımlar.
+RpcClient, receiver_keypair, arbitrage_opportunity ve amount parametreleri, arbitraj işlemini oluşturmak için kullanılır.
+Fonksiyon, arbitraj işlemi için imzalanmış bir Transaction yapısını döndürür.
