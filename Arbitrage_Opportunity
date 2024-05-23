@@ -7,3 +7,7 @@ pub struct ArbitrageOpportunity {
     pub bid_price: u64,
     pub ask_price: u64,
 }
+
+//Bu dosya, arbitraj fırsatını temsil eden ArbitrageOpportunity yapısını tanımlar.
+market_address, bid_price ve ask_price alanları, fırsatı tanımlamak için gerekli bilgileri içerir.
+Serialize ve Deserialize özellikleri, bu yapının JSON formatında serileştirilmesini ve serileştirilmesini sağlar.
