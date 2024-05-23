@@ -1,0 +1,28 @@
+use solana_client::rpc_client::RpcClient;
+use solana_program::pubkey::Pubkey;
+use serum_dex::state::MarketState;
+use std::error::Error;
+
+use crate::arbitrage_opportunity::ArbitrageOpportunity;
+use crate::arbitrage_errors::ArbitrageError;
+use crate::market_state::get_market_state;
+
+pub fn find_arbitrage_opportunity(rpc_client: &RpcClient, serum_market_address: &Pubkey) -> Result<ArbitrageOpportunity, Box<dyn Error>> {
+    let market_state = get_market_state(rpc_client, serum_market_address)?;
+    let bid_price = market_state.bids.get_best_price()?;
+    let ask_price = market_state.asks.get_best_price()?;
+
+    if bid_price > ask_price {
+        let arbitrage_opportunity = ArbitrageOpportunity {
+            market_address: *serum_market_address,
+            bid_price,
+            ask_price,
+        };
+        Ok(arbitrage_opportunity)
+    } else {
+        Err(ArbitrageError::NoOpportunityFound.into())
+    }
+}
+//Bu dosya, Serum DEX piyasasında arbitraj fırsatlarını bulan find_arbitrage_opportunity fonksiyonunu tanımlar.
+RpcClient ve serum_market_address parametreleri, piyasa durumunu almak için kullanılır.
+Fonksiyon, ArbitrageOpportunity yapısını döndürür veya NoOpportunityFound hatasını üretir.
