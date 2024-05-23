@@ -1,0 +1,14 @@
+use solana_client::rpc_client::RpcClient;
+use solana_program::pubkey::Pubkey;
+use serum_dex::state::MarketState;
+use std::error::Error;
+
+pub fn get_market_state(rpc_client: &RpcClient, serum_market_address: &Pubkey) -> Result<MarketState, Box<dyn Error>> {
+    match MarketState::load(rpc_client, *serum_market_address) {
+        Ok(market_state) => Ok(market_state),
+        Err(_) => Err(ArbitrageError::MarketStateError.into()),
+    }
+}
+//Bu dosya, Serum DEX piyasasının durumunu yükleyen get_market_state fonksiyonunu tanımlar.
+RpcClient ve serum_market_address parametreleri, piyasa durumunu almak için kullanılır.
+Fonksiyon, MarketState yapısını döndürür veya MarketStateError hatasını üretir.
