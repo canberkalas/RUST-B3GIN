@@ -5,7 +5,6 @@ use std::fmt;
 pub enum ArbitrageError {
     NoOpportunityFound,
     InsufficientFunds,
-    FlashLoanError,
     MarketStateError,
     NetworkError,
     TransactionError,
@@ -16,7 +15,6 @@ impl fmt::Display for ArbitrageError {
         match self {
             ArbitrageError::NoOpportunityFound => write!(f, "Arbitraj fırsatı bulunamadı"),
             ArbitrageError::InsufficientFunds => write!(f, "Yetersiz fon"),
-            ArbitrageError::FlashLoanError => write!(f, "Flashloan hatası"),
             ArbitrageError::MarketStateError => write!(f, "Piyasa durumu hatası"),
             ArbitrageError::NetworkError => write!(f, "Ağ hatası"),
             ArbitrageError::TransactionError => write!(f, "İşlem hatası"),
